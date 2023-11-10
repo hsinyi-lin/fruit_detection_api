@@ -2,9 +2,9 @@ from django.db import models
 
 
 class Account(models.Model):
-    email = models.IntegerField(primary_key=True)
-    password = models.CharField(max_length=45, blank=True, null=True)
-    nickname = models.CharField(max_length=45, blank=True, null=True)
+    email = models.CharField(primary_key=True, max_length=100)
+    password = models.TextField()
+    nickname = models.CharField(max_length=45)
 
     class Meta:
         managed = False
