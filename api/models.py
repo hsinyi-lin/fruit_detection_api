@@ -21,7 +21,6 @@ class Fruit(models.Model):
 
 
 class Recipe(models.Model):
-    email = models.CharField(max_length=45, blank=True, null=True)
     title = models.CharField(max_length=45, blank=True, null=True)
     step = models.CharField(max_length=45, blank=True, null=True)
     ingredient = models.CharField(max_length=45, blank=True, null=True)

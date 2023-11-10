@@ -67,6 +67,7 @@ def login(request):
 
 
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def get_recipes(request):
     recipes = Recipe.objects.all()
 
@@ -75,3 +76,71 @@ def get_recipes(request):
         'data': recipes.values_list()
     })
 
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_recipes(request):
+    recipes = Recipe.objects.all()
+
+    return Response({
+        'success': True,
+        'data': recipes.values_list()
+    })
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_recipe(request):
+    data = request.query_params
+    recipe_id = data.get('id')
+
+    recipe = Recipe.objects.get(id=recipe_id)
+
+    return Response({
+        'success': True,
+        'data': recipe.values_list()
+    })
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def filter_recipes(request):
+    data = request.query_params
+
+    search_string = data.get('title')
+    recipe = Recipe.objects.filter(title__icontains=search_string)
+
+    return Response({
+        'success': True,
+        'data': recipe.values_list()
+    })
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def all_fruit_info(request):
+    fruits = Fruit.objects.all()
+
+    return Response({
+        'success': True,
+        'data': fruits.values_list()
+    })
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def fruit_info(request):
+    data = request.query_params
+    fruit_id = data.get('id')
+
+    try:
+        fruit = Fruit.objects.get(id=fruit_id)
+    except:
+        return Response({
+            'success': False,
+            'msg': '查無資料'
+        })
+
+    return Response({
+        'success': True,
+        'data': fruit.values_list()
+    })
