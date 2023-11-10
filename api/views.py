@@ -8,6 +8,8 @@ from rest_framework.response import Response
 from api.serializers import AccountSerializer
 from .models import *
 
+from rest_framework_simplejwt.tokens import RefreshToken
+
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -33,3 +35,32 @@ def register(request):
         'success': True,
         'msg': '註冊成功'
     })
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def login(request):
+    data = request.data
+    email = data.get('email').strip()
+    password = data.get('password').strip()
+
+    sha256 = hashlib.sha256()
+    sha256.update(password.encode('utf-8'))
+    password_hash = sha256.hexdigest()
+
+    user = Account.objects.filter(email=email, password=password_hash)
+    if not user.exists():
+        return Response({
+            'success': False,
+            'msg': '帳號或密碼錯誤'
+        })
+
+    user = user.first()
+
+    refresh = RefreshToken.for_user(user)
+    access_token = str(refresh.access_token)
+
+    # decoded_token = jwt.decode(access_token, settings.SECRET_KEY, algorithms=['HS256'])
+    # print(decoded_token)
+
+    return Response({'success': True, 'message': '登入成功', 'access_token': access_token})
