@@ -64,3 +64,14 @@ def login(request):
     # print(decoded_token)
 
     return Response({'success': True, 'message': '登入成功', 'access_token': access_token})
+
+
+@api_view(['GET'])
+def get_recipes(request):
+    recipes = Recipe.objects.all()
+
+    return Response({
+        'success': True,
+        'data': recipes.values_list()
+    })
+

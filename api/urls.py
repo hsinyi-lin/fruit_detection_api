@@ -6,4 +6,5 @@ from api.views import *
 urlpatterns = [
     path('user/register/', register, name='register'),
     path('user/login/', login, name='login'),
+    path('get_recipes/', get_recipes, name='get_recipes'),
 ]
