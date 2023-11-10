@@ -180,3 +180,30 @@ def add_answer(request):
     return Response({'success': True, 'msg': '新增成功'})
 
 
+@api_view(['POST'])
+def fruit_detection(request):
+    photo = request.FILES['photo']
+    class_id, class_name, confidence_score = predict_pic(photo)
+
+    fruit = Fruit.objects.get(id=str(class_id))
+    recipes = Recipe.objects.filter(title__icontains=fruit.name)
+
+    return Response({
+        'class_id': class_id,
+        'class_name': class_name,
+        'confidence_score:': round(float(confidence_score), 4),
+        'fruit_nutrition': fruit.nutrition,
+        'fruit_prevention': fruit.prevent,
+        'recipe_list': [
+            {
+                'id': recipe.id,
+                'title': recipe.title,
+                'step': recipe.step.split(),
+                'ingredient': recipe.ingredient,
+                'picture': recipe.picture
+            }
+            for recipe in recipes
+        ]
+    })
+
+
