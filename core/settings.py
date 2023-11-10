@@ -88,7 +88,7 @@ REST_FRAMEWORK = {
         'utils.token.CustomJWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.AllowAny',
     ],
     'EXCEPTION_HANDLER': 'utils.handlers.custom_exception_handler'
 }
