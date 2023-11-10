@@ -15,4 +15,5 @@ urlpatterns = [
     path('get_question/', get_question, name='get_question'),
     path('add_question/', add_question, name='add_question'),
     path('add_answer/', add_answer, name='add_answer'),
+    path('fruit_detection/', fruit_detection, name='fruit_detection'),
 ]

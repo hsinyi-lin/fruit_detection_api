@@ -5,10 +5,11 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from api.serializers import AccountSerializer
+from api.serializers import *
 from .models import *
 
 from rest_framework_simplejwt.tokens import RefreshToken
+from utils.predict import *
 
 
 @api_view(['POST'])
@@ -55,13 +56,9 @@ def login(request):
 @api_view(['GET'])
 def get_recipes(request):
     recipes = Recipe.objects.all()
-    return Response({'success': True, 'data': recipes.values_list()})
+    serializer = RecipeSerializer(recipes, many=True)
 
-
-@api_view(['GET'])
-def get_recipes(request):
-    recipes = Recipe.objects.all()
-    return Response({'success': True, 'data': recipes.values_list()})
+    return Response({'success': True, 'data': serializer.data})
 
 
 @api_view(['GET'])
@@ -70,24 +67,28 @@ def get_recipe(request):
     recipe_id = data.get('id')
 
     recipe = Recipe.objects.get(id=recipe_id)
+    serializer = RecipeSerializer(recipe)
 
-    return Response({ 'success': True, 'data': recipe.values_list()})
+    return Response({ 'success': True, 'data': serializer.data })
+
 
 @api_view(['GET'])
 def filter_recipes(request):
     data = request.query_params
 
     search_string = data.get('title')
-    recipe = Recipe.objects.filter(title__icontains=search_string)
+    recipes = Recipe.objects.filter(title__icontains=search_string)
+    serializer = RecipeSerializer(recipes, many=True)
 
-    return Response({'success': True,'data': recipe.values_list()})
+    return Response({'success': True,'data': serializer.data})
 
 
 @api_view(['GET'])
 def all_fruit_info(request):
     fruits = Fruit.objects.all()
+    serializer = FruitSerializer(fruits, many=True)
 
-    return Response({'success': True,'data': fruits.values_list()})
+    return Response({'success': True, 'data': serializer.data})
 
 
 @api_view(['GET'])
@@ -100,17 +101,17 @@ def fruit_info(request):
     except:
         return Response({'success': False, 'msg': '查無資料'})
 
-    return Response({'success': True, 'data': fruit.values_list()})
+    serializer = FruitSerializer(fruit)
+
+    return Response({'success': True, 'data': serializer.data})
 
 
 @api_view(['GET'])
 def get_questions(request):
     questions = Question.objects.all()
+    serializer = QuestionSerializer(questions, many=True)
 
-    return Response({
-        'success': True,
-        'data': questions.values_list()
-    })
+    return Response({'success': True, 'data': serializer.data})
 
 
 @api_view(['GET'])
@@ -131,8 +132,16 @@ def get_question(request):
             'question': question.id,
             'title': question.title,
             'content': question.content,
-            'email': question.email,
-            'answers': answers.values_list()
+            'email': question.email.pk,
+            'nickname': question.email.nickname,
+            'answers': [
+                {
+                    'email': answer.email.pk,
+                    'answer_nickname': answer.email.nickname,
+                    'content': answer.content
+                }
+                for answer in answers
+            ]
         }
     })
 
@@ -147,7 +156,7 @@ def add_question(request):
     email = request.user_id
 
     try:
-        question = Question.objects.create(title=title, content=content, email_id=email)
+        Question.objects.create(title=title, content=content, email_id=email)
     except:
         return Response({'success': False, 'msg': '請輸入完整'})
 
@@ -160,10 +169,11 @@ def add_answer(request):
     data = request.data
 
     question_id = data.get('question_id')
+    content = data.get('content')
     email = request.user_id
 
     try:
-        answer = Answer.objects.create(question_id=question_id, email_id=email)
+        Answer.objects.create(question_id=question_id, content=content, email_id=email)
     except:
         return Response({'success': False, 'msg': '請輸入完整'})
 

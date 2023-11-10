@@ -14,6 +14,7 @@ class Account(models.Model):
 class Answer(models.Model):
     question = models.ForeignKey('Question', models.DO_NOTHING)
     email = models.ForeignKey(Account, models.DO_NOTHING, db_column='email')
+    content = models.CharField(max_length=100)
 
     class Meta:
         managed = False
@@ -21,8 +22,10 @@ class Answer(models.Model):
 
 
 class Fruit(models.Model):
+    id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=45, blank=True, null=True)
-    content = models.CharField(max_length=45, blank=True, null=True)
+    nutrition = models.CharField(max_length=45, blank=True, null=True)
+    prevent = models.CharField(max_length=45, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -40,9 +43,9 @@ class Question(models.Model):
 
 
 class Recipe(models.Model):
-    title = models.CharField(max_length=45, blank=True, null=True)
-    step = models.CharField(max_length=45, blank=True, null=True)
-    ingredient = models.CharField(max_length=45, blank=True, null=True)
+    title = models.CharField(max_length=100, blank=True, null=True)
+    step = models.TextField(blank=True, null=True)
+    ingredient = models.CharField(max_length=100, blank=True, null=True)
     picture = models.TextField(blank=True, null=True)
 
     class Meta:
