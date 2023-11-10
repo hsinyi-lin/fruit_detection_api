@@ -144,3 +144,83 @@ def fruit_info(request):
         'success': True,
         'data': fruit.values_list()
     })
+
+@api_view(['GET'])
+def get_questions(request):
+    questions = Question.objects.all()
+
+    return Response({
+        'success': True,
+        'data': questions.values_list()
+    })
+
+@api_view(['GET'])
+def get_question(request):
+    data = request.query_params
+    fruit_id = data.get('id')
+
+    try:
+        question = Question.objects.get(id=fruit_id)
+    except:
+        return Response({
+            'success': False,
+            'msg': '查無資料'
+        })
+
+    answers = Answer.objects.filter(question=question)
+
+    return Response({
+        'success': True,
+        'data': {
+            'question': question.id,
+            'title': question.title,
+            'content': question.content,
+            'email': question.email,
+            'answers': answers.values_list()
+        }
+    })
+
+
+@api_view(['POST'])
+def add_question(request):
+    data = request.data
+
+    title = data.get('title')
+    content = data.get('content')
+    email = request.user_id
+
+    try:
+        question = Question.objects.create(title=title, content=content, email_id=email)
+    except:
+        return Response({
+            'success': False,
+            'msg': '請輸入完整'
+        })
+
+    return Response({
+        'success': True,
+        'msg': '新增成功'
+    })
+
+
+@api_view(['POST'])
+def add_answer(request):
+    data = request.data
+
+    question_id = data.get('question_id')
+    email = request.user_id
+
+    try:
+        answer = Answer.objects.create(question_id=question_id, email_id=email)
+    except:
+        return Response({
+            'success': False,
+            'msg': '請輸入完整'
+        })
+
+    return Response({
+        'success': True,
+        'msg': '新增成功'
+    })
+
+

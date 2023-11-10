@@ -11,6 +11,15 @@ class Account(models.Model):
         db_table = 'account'
 
 
+class Answer(models.Model):
+    question = models.ForeignKey('Question', models.DO_NOTHING)
+    email = models.ForeignKey(Account, models.DO_NOTHING, db_column='email')
+
+    class Meta:
+        managed = False
+        db_table = 'answer'
+
+
 class Fruit(models.Model):
     name = models.CharField(max_length=45, blank=True, null=True)
     content = models.CharField(max_length=45, blank=True, null=True)
@@ -18,6 +27,16 @@ class Fruit(models.Model):
     class Meta:
         managed = False
         db_table = 'fruit'
+
+
+class Question(models.Model):
+    title = models.CharField(max_length=45)
+    content = models.CharField(max_length=100)
+    email = models.ForeignKey(Account, models.DO_NOTHING, db_column='email')
+
+    class Meta:
+        managed = False
+        db_table = 'question'
 
 
 class Recipe(models.Model):

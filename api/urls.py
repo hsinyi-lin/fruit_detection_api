@@ -11,4 +11,8 @@ urlpatterns = [
     path('filter_recipes/', filter_recipes, name='filter_recipes'),
     path('all_fruit_info/', all_fruit_info, name='all_fruit_info'),
     path('fruit_info/', fruit_info, name='fruit_info'),
+    path('get_questions/', get_questions, name='get_questions'),
+    path('get_question/', get_question, name='get_question'),
+    path('add_question/', add_question, name='add_question'),
+    path('add_answer/', add_answer, name='add_answer'),
 ]
